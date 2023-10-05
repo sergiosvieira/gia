@@ -15,6 +15,7 @@ SOURCES += \
 
 HEADERS += \
     examples/node-events.h \
+    examples/split-screens.h \
     examples/squares.h \
     include/event-manager.h \
     include/event-type.h \

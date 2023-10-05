@@ -9,11 +9,18 @@ Game::Game(const std::string& title):
 }
 
 Game::~Game() {
+    for (size_t i = 0; i < screens.size(); ++i) {
+        UnloadRenderTexture(*screens[i]);
+    }
     CloseWindow();
 }
 
 void Game::add(GameState state, PtrNode node) {
-    states[state] = node;
+    states[state].push_back(node);
+}
+
+Rectangle Game::getRect() const {
+    return {0.f, 0.f, winWidth(), winHeight()};
 }
 
 void Game::init() {
@@ -25,26 +32,62 @@ void Game::init() {
     SetTargetFPS(60);
 }
 
+void Game::addScreens() {
+    if (states.find(currentState) == states.end()) return;
+    size_t size = states[currentState].size();
+    for (size_t i = 0; i < size; ++i) {
+        int w = Game::winWidth();
+        int h = Game::winHeight();
+        screens.push_back(
+            std::make_shared<RenderTexture2D>(
+                LoadRenderTexture(w, h)
+            )
+        );
+    }
+}
+
 void Game::update() {
-    for (auto& [state, node]: states) {
-        node->update();
+    if (states.find(currentState) == states.end()) return;
+    for (size_t i = 0; i <  states[currentState].size(); ++i) {
+        states[currentState][i]->update();
     }
 }
 
 void Game::draw() {
-    for (auto& [state, node]: states) {
-        node->draw();
+    if (states.find(currentState) == states.end()) return;
+    for (size_t i = 0; i < states[currentState].size(); ++i) {
+        BeginTextureMode(*screens[i]);
+            states[currentState][i]->draw();
+        EndTextureMode();
+    }
+}
+
+void Game::drawScreens() {
+    for (size_t i = 0; i < screens.size(); ++i) {
+        Rectangle src = {
+            0.f,
+            0.f,
+            static_cast<float>(screens[i]->texture.width),
+            -static_cast<float>(screens[i]->texture.height)
+        };
+        float height = screens[i]->texture.height / screens.size();
+        Vector2 dst = {
+            0.f,
+            i * height
+        };
+        DrawTextureRec(screens[i]->texture, src, dst, WHITE);
     }
 }
 
 void Game::run() {
+    addScreens();
     while (!WindowShouldClose()) {
         EventManager::instance().systemEvents();
         EventManager::instance().processEvents();
         update();
-        BeginDrawing();
         draw();
-        ClearBackground(BLACK);
+        BeginDrawing();
+            drawScreens();
         EndDrawing();
     }
 }

@@ -3,7 +3,6 @@
 
 #include "../include/game.h"
 #include "../include/node.h"
-#include "../include/gia-math.h"
 #include "../include/event-manager.h"
 #include "../include/keyboard-event.h"
 

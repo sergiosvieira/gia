@@ -14,6 +14,7 @@ using Children = std::vector<PtrNode>;
 struct Node: Handler, HandlerVisitor {
     Vector2 pos = {};
     float width = 0.f, height = 0.f;
+    Node(){}
     Node(const Vector2& pos, const Vector2& length);
     virtual ~Node(){}
     void add(PtrNode);

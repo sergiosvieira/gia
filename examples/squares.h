@@ -40,11 +40,17 @@ using Vector = std::vector<PtrSquare>;
 
 void start() {
     Game game("Exemplo 01 - Quadrados");
-    std::vector<Color> colors = {RED, GREEN, BLUE, YELLOW};
+    std::vector<Color> colors = {
+        {255, 153, 204, 255},
+        {153, 255, 204, 255},
+        {153, 204, 255, 255},
+        {204, 255, 153, 255}
+    };
     PtrSquare fase1 = std::make_shared<Square>(
         Vector2{0.0, 0.0},
         Vector2{Game::winWidth(), Game::winHeight()}
     );
+
     size_t size = 10;
     Vector v = Vector(size + 1, nullptr);
     v[0] = fase1;
@@ -64,6 +70,7 @@ void start() {
         d *= 1.1f;
         vel *= 1.1;
     }
+    game.add(GameState::MainScreen, fase1);
     game.add(GameState::MainScreen, fase1);
     game.run();
 }
