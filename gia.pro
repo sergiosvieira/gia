@@ -9,19 +9,23 @@ LIBS += -lraygui
 
 SOURCES += \
         main.cpp \
+        src/animation/frame.cpp \
         src/change-state-event.cpp \
         src/event-manager.cpp \
         src/gia-math.cpp \
         src/game.cpp \
         src/keyboard-event.cpp \
         src/mouse-event.cpp \
-        src/node.cpp
+        src/node.cpp \
+        src/utils/randomize.cpp
 
 HEADERS += \
     examples/gui.h \
     examples/node-events.h \
     examples/split-screens.h \
     examples/squares.h \
+    games/space-ai/space-ai.h \
+    include/animation/frame.h \
     include/change-state-event.h \
     include/event-manager.h \
     include/event-type.h \
@@ -34,3 +38,6 @@ HEADERS += \
     include/keyboard-event.h \
     include/mouse-event.h \
     include/node.h \
+    include/utils/data-time.h \
+    include/utils/layout.h \
+    include/utils/randomize.h

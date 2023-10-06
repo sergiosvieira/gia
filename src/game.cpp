@@ -32,6 +32,10 @@ void Game::add(GameState state, PtrNode node) {
     states[state].push_back(node);
 }
 
+HandlerPtr Game::get(GameState state, size_t index) {
+    return states[state][index];
+}
+
 Rectangle Game::getRect() const {
     return {0.f, 0.f, winWidth(), winHeight()};
 }

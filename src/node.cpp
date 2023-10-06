@@ -42,4 +42,7 @@ void Node::draw() {
 
 void Node::handle(struct Event& event) {
     event.accept(*this);
+    for (PtrNode node: children) {
+        node->handle(event);
+    }
 }

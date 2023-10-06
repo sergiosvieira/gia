@@ -19,7 +19,7 @@ void EventManager::emmit(EventPtr event) {
 }
 
 void EventManager::systemEvents() {
-    KeyboardKey code = static_cast<KeyboardKey>(GetKeyPressed());
+    KeyboardKey code = static_cast<KeyboardKey>(GetKeyDown());
     if (code != KEY_NULL) {
         events.push(std::make_shared<KeyboardEvent>(code));
     }
