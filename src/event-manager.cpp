@@ -10,6 +10,14 @@ void EventManager::subscribe(EventType type, PtrNode node) {
     map[type].insert(node);
 }
 
+void EventManager::subscribe(EventType type, HandlerPtr handler) {
+    map[type].insert(handler);
+}
+
+void EventManager::emmit(EventPtr event) {
+    events.push(event);
+}
+
 void EventManager::systemEvents() {
     KeyboardKey code = static_cast<KeyboardKey>(GetKeyPressed());
     if (code != KEY_NULL) {

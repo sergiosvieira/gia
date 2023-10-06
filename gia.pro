@@ -2,10 +2,14 @@ TEMPLATE = app
 CONFIG += console c++20
 CONFIG -= app_bundle
 CONFIG -= qt
-LIBS += -L/usr/local/lib64 -lraylib -ldl -lpthread
+LIBS += -L/usr/local/lib64 -lraylib -ldl -lpthread -lGL
+LIBS += -lraygui
+#LIBS += -L/usr/local/lib64 -lraylib -fpic -lGL -lm -ldl -lrt -lX11 -lpthread
+#DEFINES +== RAYGUI_IMPLEMENTATION
 
 SOURCES += \
         main.cpp \
+        src/change-state-event.cpp \
         src/event-manager.cpp \
         src/gia-math.cpp \
         src/game.cpp \
@@ -14,9 +18,11 @@ SOURCES += \
         src/node.cpp
 
 HEADERS += \
+    examples/gui.h \
     examples/node-events.h \
     examples/split-screens.h \
     examples/squares.h \
+    include/change-state-event.h \
     include/event-manager.h \
     include/event-type.h \
     include/event.h \

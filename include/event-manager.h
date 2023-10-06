@@ -18,6 +18,8 @@ struct EventManager {
         return self;
     }
     void subscribe(EventType, std::shared_ptr<struct Node>);
+    void subscribe(EventType, HandlerPtr);
+    void emmit(EventPtr event);
 private:
     Map map = {
         {EventType::KeyPressed, {}},

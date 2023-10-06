@@ -2,6 +2,7 @@
 #define GAMESTATE_H
 
 enum class GameState {
+    None,
     Logo,
     MainScreen,
     SelectScreen,

@@ -1,7 +1,20 @@
 #include "../include/game.h"
 
 #include <raylib.h>
+#include "../include/node.h"
 #include "../include/event-manager.h"
+#include "../include/change-state-event.h"
+
+struct GameHandler: Handler, HandlerVisitor {
+    Game& game;
+    GameHandler(Game& g): game(g){}
+    void handle(struct Event& event) override {
+        event.accept(*this);
+    }
+    virtual void visit(const ChangeStateEvent& msg) override {
+        game.currentState = msg.state;
+    }
+};
 
 Game::Game(const std::string& title):
     title(title) {
@@ -30,6 +43,8 @@ void Game::init() {
         title.c_str()
     );
     SetTargetFPS(60);
+    gameHandler = std::make_shared<GameHandler>(*this);
+    EventManager::instance().subscribe(EventType::ChangeState, gameHandler);
 }
 
 void Game::addScreens() {
