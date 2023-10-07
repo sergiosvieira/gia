@@ -31,6 +31,10 @@ void EventManager::systemEvents() {
 void EventManager::processEvents() {
     while (!events.empty()) {
         EventType type = events.front()->type();
+        if (type == EventType::ScoreUp) {
+            size_t s = map[type].size();
+            std::cout << s << '\n';
+        }
         for (HandlerPtr ptr: map[type]) {
             ptr->handle(*events.front());
         }

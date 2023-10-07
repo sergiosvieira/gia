@@ -32,11 +32,11 @@ const PtrNode Node::getParent() {
 }
 
 void Node::draw() {
-    render();
+    if (visible) render();
     for (PtrNode node: children) {
-        node->pos = node->pos + pos;
-        node->draw();
-        node->pos = node->pos - pos;
+//        node->pos = node->pos + pos;
+        if (node->visible) node->draw();
+//        node->pos = node->pos - pos;
     }
 }
 

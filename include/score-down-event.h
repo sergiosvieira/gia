@@ -1,0 +1,4 @@
+#ifndef SCOREDOWNEVENT_H
+#define SCOREDOWNEVENT_H
+
+#endif // SCOREDOWNEVENT_H

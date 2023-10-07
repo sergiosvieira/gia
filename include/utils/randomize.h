@@ -5,15 +5,15 @@
 #include <random>
 
 struct Randomize {
-    using Distribution = std::uniform_int_distribution<int>;
+    using DistInt = std::uniform_int_distribution<int>;
+    using DistFlo = std::uniform_real_distribution<float>;
     static int gen(int min, int max);
+    static float gen(float min, float max);
+    static float genGAP(float max, float min);
     template <typename T>
     static T elements(const std::vector<T>& v) {
         if (v.empty()) return T();
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        Distribution distribution(0, v.size() - 1);
-        int randomIndex = distribution(gen);
+        int randomIndex = gen(0, v.size() - 1);
         return v[randomIndex];
     }
 };

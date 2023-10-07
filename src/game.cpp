@@ -75,7 +75,7 @@ void Game::update() {
 void Game::draw() {
     if (states.find(currentState) == states.end()) return;
     for (size_t i = 0; i < states[currentState].size(); ++i) {
-        BeginTextureMode(*screens[i]);
+        BeginTextureMode(*screens[i]);            
             states[currentState][i]->draw();
         EndTextureMode();
     }

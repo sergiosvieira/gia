@@ -11,12 +11,15 @@ SOURCES += \
         main.cpp \
         src/animation/frame.cpp \
         src/change-state-event.cpp \
+        src/collision-event.cpp \
         src/event-manager.cpp \
         src/gia-math.cpp \
         src/game.cpp \
         src/keyboard-event.cpp \
         src/mouse-event.cpp \
         src/node.cpp \
+        src/score-down-event.cpp \
+        src/score-up-event.cpp \
         src/utils/randomize.cpp
 
 HEADERS += \
@@ -27,6 +30,7 @@ HEADERS += \
     games/space-ai/space-ai.h \
     include/animation/frame.h \
     include/change-state-event.h \
+    include/collision-event.h \
     include/event-manager.h \
     include/event-type.h \
     include/event.h \
@@ -38,6 +42,8 @@ HEADERS += \
     include/keyboard-event.h \
     include/mouse-event.h \
     include/node.h \
+    include/score-down-event.h \
+    include/score-up-event.h \
     include/utils/data-time.h \
     include/utils/layout.h \
     include/utils/randomize.h

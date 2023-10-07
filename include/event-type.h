@@ -5,7 +5,10 @@ enum class EventType {
     None,
     MouseClick,
     KeyPressed,
-    ChangeState
+    ChangeState,
+    ScoreUp,
+    ScoreDown,
+    Collision
 };
 
 #endif // EVENTTYPE_H
