@@ -45,9 +45,12 @@ HEADERS += \
     include/gia-math.h \
     include/handler-visitor.h \
     include/handler.h \
+    include/physics/jump-random.h \
     include/keyboard-event.h \
     include/mouse-event.h \
     include/node.h \
+    include/physics/gravity.h \
+    include/physics/jump.h \
     include/physics/left-inf-random.h \
     include/physics/left-infinite.h \
     include/physics/physics.h \

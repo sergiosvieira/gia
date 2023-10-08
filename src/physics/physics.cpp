@@ -14,6 +14,14 @@ const Physics::Map Physics::m = {
     {Physics::Orientation::DownRight, [](Vector2 pos, float speed){return Vector2{pos.x + speed, pos.y + speed};}}
 };
 
+Physics::Physics(Vector2 v): vel(v) {
+
+}
+
+Physics::Physics() {
+
+}
+
 Physics::~Physics(){}
 
 Vector2 Physics::translate(const Vector2& pos, float speed, Orientation o) {
@@ -23,4 +31,9 @@ Vector2 Physics::translate(const Vector2& pos, float speed, Orientation o) {
     } else {
         return pos;
     }
+}
+
+bool Physics::collided(const Rectangle& r1, const Rectangle& r2) {
+    bool result = CheckCollisionRecs(r1, r2);
+    return result;
 }

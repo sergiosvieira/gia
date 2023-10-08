@@ -20,7 +20,7 @@ struct Square : Node {
     }
     void update() override {
         pos = pos + vel;
-        PtrNode parent = getParent();
+        const Node* parent = getParent();
         if (parent != nullptr) {
             if ((pos.x + width)  > (parent->pos.x + parent->width)
                     || pos.x < parent->pos.x) {

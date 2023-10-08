@@ -75,7 +75,7 @@ struct BaseSpaceship: Node {
         height = 29;
     }
     void limiter() {
-         PtrNode parent = getParent();
+        const Node* parent = getParent();
         if (parent != nullptr) {
             if ((pos.x + width)  > (parent->pos.x + parent->width)) {
                 pos.x = parent->width - width;

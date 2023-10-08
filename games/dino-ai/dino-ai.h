@@ -6,7 +6,13 @@
 #include "include/animation/animated-sprite.h"
 #include "include/sprite.h"
 #include "include/physics/left-infinite.h"
-#include "include/physics/left-inf-random.h".h"
+#include "include/physics/left-inf-random.h"
+#include "include/physics/jump.h"
+#include "include/keyboard-event.h"
+#include "include/event-manager.h"
+#include "include/physics/jump-random.h"
+#include "include/gia-math.h"
+#include "include/score-up-event.h"
 
 
 enum class Action {
@@ -14,6 +20,22 @@ enum class Action {
     Jump,
     Crounch
 };
+
+struct GameOver : Node {
+    Color color;
+    GameOver(Color color): Node(), color(color) {
+    }
+    void render() override {
+        GuiSetStyle(DEFAULT, TEXT_SIZE, 150);
+        GuiSetStyle(DEFAULT, TEXT_SPACING, 10);
+        GuiSetStyle( DEFAULT, TEXT_COLOR_NORMAL, 0xFFFFFFFF);
+        GuiSetStyle(LABEL, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
+        ClearBackground(color);
+        GuiSetStyle(DEFAULT, TEXT_SIZE, 100);
+        GuiLabel({0, 0, width, height}, "GAME OVER");
+    }
+};
+
 
 struct Cactus: Node {
     SpritePtr sprite = nullptr;
@@ -24,11 +46,14 @@ struct Cactus: Node {
         width = frame.width;
         height = frame.height;
         pos.y = (Game::winHeight() / 2.f) - frame.height - 12;
-        pos = moviment.move(getRect(), Physics::Orientation::Left);
+        pos.x = Game::winWidth();/*moviment.move(getRect(), {}, Physics::Orientation::Left);*/
     }
     ~Cactus(){}
     void update() override {
-        pos = moviment.move(getRect(), Physics::Orientation::Left);
+        pos = moviment.move(getRect(), {}, Physics::Orientation::Left);
+        if (pos.x + width - moviment.speed < 0) {
+            EventManager::instance().emmit(std::make_shared<ScoreUpEvent>());
+        }
         Node::update();
     }
     void render() override {
@@ -46,28 +71,50 @@ struct Ground: Node {
     }
     ~Ground(){}
     void update() override {
-        pos = movement.move(getRect(), Physics::Orientation::None);
+        pos = movement.move(getRect(), {}, Physics::Orientation::None);
     }
     void render() override {
         sprite.render(getRect());
     }
 };
 
+template<typename T>
 struct BaseDino: Node {
     AnimatedSprite run{"./games/dino-ai/img/dino-01.png", Frame({48.f, 45.f}, {1, 1, 3}, {1, 5}, 0.1)};
     AnimatedSprite crounch{"./games/dino-ai/img/dino-02.png", Frame({57.f, 45.f}, {0, 0, 1}, {1, 2}, 0.1)};
-    BaseDino(): Node() {
+    Rectangle groundRect;
+    using Vector = std::vector<PhysicsPtr>;
+    const Vector2 velocity = {0.f, 3.f};
+    std::shared_ptr<T> movement = nullptr;
+    explicit BaseDino(Rectangle ground): Node(), groundRect(ground) {
         width = run.frame.width;
         height = run.frame.height;
+        groundRect.y += 8.f;
+        movement = std::make_shared<T>(Vector2{0.f, 8.f});
     }
     ~BaseDino(){}
     void update() override {
-        run.update();
+        run.update();        
+        pos = movement->move(getRect(), groundRect);
         Node::update();
     }
     void render() override {
         ClearBackground(LIGHTGRAY);
         run.render(getRect());
+    }
+};
+
+struct Human : BaseDino<Jump> {
+    Human(Rectangle rect): BaseDino<Jump>(rect){}
+    void visit(const KeyboardEvent& msg) override {
+        if (msg.keyCode == KEY_SPACE && !movement->isJumping()) {
+            movement->jump();
+        }
+    }
+};
+
+struct DinoAI: BaseDino<JumpRandom> {
+    DinoAI(Rectangle rect): BaseDino<JumpRandom>(rect){
     }
 };
 
@@ -77,29 +124,50 @@ struct GameScreen: Node {
     using CactusPtr = std::shared_ptr<Cactus>;
     using Vector = std::vector<CactusPtr>;
     PlayerPtr player = nullptr;
+    PtrNode gameover = nullptr;
     Vector cactus = {
         std::make_shared<Cactus>("./games/dino-ai/img/cactus-big.png", Frame({25.f, 50.f}, {0, 0, 5}, {1, 6}, 0.f)),
         std::make_shared<Cactus>("./games/dino-ai/img/cactus-small.png", Frame({17.f, 35.f}, {0, 0, 5}, {1, 6}, 0.f)),
     };
-    PtrNode gameover = nullptr;
     int score = 0.f;
     bool finished = false;
-
-    GameScreen() {
+    PtrNode ground = nullptr;
+    GameScreen(Color gameoverColor) {
         width = Game::winWidth();
         height = Game::winHeight() / 2.f;
-        add(std::make_shared<Ground>());
-        player = std::make_shared<Player>();
+        ground = std::make_shared<Ground>();
+        add(ground);
+        Rectangle groundRect = ground->getRect();
+        player = std::make_shared<Player>(groundRect);
         player->pos.x = player->width;
         player->pos.y = height - player->height * 1.3f;
         add(player);
         for (auto& c: cactus) {
             add(c);
         }
+        gameover = std::make_shared<GameOver>(gameoverColor);
+        gameover->width = width;
+        gameover->height = height;
+        gameover->visible = false;
+        add(gameover);
     }
     ~GameScreen(){}
+    void finish() {
+        player->visible = false;
+        for (auto& e: cactus) {
+            e->visible = false;
+        }
+        gameover->visible = true;
+        ground->visible = false;
+        finished = true;
+    }
     void update() override {
         if (finished) return;
+        for (auto& c: cactus) {
+            if (Physics::collided(padding(player->getRect(), 10.f, 5.f), c->getRect())) {
+                finish();
+            }
+        }
         Node::update();
     }
     void render() override {
@@ -113,8 +181,11 @@ struct GameScreen: Node {
 
 void start() {
     Game game("Dino Artificial Intelligence");
-    game.add(GameState::MainScreen, std::make_shared<GameScreen<BaseDino>>());
-    game.add(GameState::MainScreen, std::make_shared<GameScreen<BaseDino>>());
+    game.add(GameState::MainScreen, std::make_shared<GameScreen<Human>>(RED));
+    HandlerPtr human = game.get(GameState::MainScreen, 0);
+    EventManager::instance().subscribe(EventType::KeyPressed, human);
+    EventManager::instance().subscribe(EventType::ScoreUp, human);
+    game.add(GameState::MainScreen, std::make_shared<GameScreen<DinoAI>>(MAROON));
     game.run();
 }
 
