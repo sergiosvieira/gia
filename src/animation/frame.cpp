@@ -1,7 +1,6 @@
 #include "include/animation/frame.h"
 
 #include "raylib.h"
-#include "include/utils/data-time.h"
 
 Rectangle Frame::getRect() const {
     int row = currentIndex / cols;
@@ -12,15 +11,10 @@ Rectangle Frame::getRect() const {
 }
 
 void Frame::next() {
-    if (currentIndex < lastIndex) {
-        float now = GetTime();
-        if (timer(now, start, interval)) {
-            start = now;
-            ++currentIndex;
-        }
-    }
-    else {
+    if (currentIndex + 1 > lastIndex) {
         currentIndex = firstIndex;
+    } else {
+        ++currentIndex;
     }
 }
 

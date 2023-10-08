@@ -6,7 +6,8 @@
 
 struct KeyboardEvent : Event {
     KeyboardKey keyCode = KEY_NULL;
-    KeyboardEvent(KeyboardKey code): keyCode(code){}
+    explicit KeyboardEvent(KeyboardKey code): keyCode(code){}
+    ~KeyboardEvent(){}
     EventType type() override {
         return EventType::KeyPressed;
     }

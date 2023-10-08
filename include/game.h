@@ -12,7 +12,7 @@ using StateMap = std::unordered_map<GameState, std::vector<PtrNode>>;
 struct GameHandler;
 
 struct Game {
-    Game(const std::string&);
+    explicit Game(const std::string&);
     virtual ~Game();
     void run();
     static float winWidth();
@@ -22,7 +22,7 @@ struct Game {
     Rectangle getRect() const;
 private:
     using RenderTexturePtr = std::shared_ptr<RenderTexture2D>;
-    using VectorRen = std::vector<RenderTexturePtr>;    
+    using Vector = std::vector<RenderTexturePtr>;
     std::shared_ptr<GameHandler> gameHandler = nullptr;
     void init();
     void addScreens();
@@ -32,7 +32,7 @@ private:
     void updateScreens();
     StateMap states;
     std::string title = "";
-    VectorRen screens;
+    Vector textures;
     friend GameHandler;
     GameState currentState = GameState::MainScreen;
 };

@@ -1,5 +1,5 @@
 TEMPLATE = app
-CONFIG += console c++20
+CONFIG += console c++20 -g
 CONFIG -= app_bundle
 CONFIG -= qt
 LIBS += -L/usr/local/lib64 -lraylib -ldl -lpthread -lGL
@@ -9,6 +9,7 @@ LIBS += -lraygui
 
 SOURCES += \
         main.cpp \
+        src/animation/animated-sprite.cpp \
         src/animation/frame.cpp \
         src/change-state-event.cpp \
         src/collision-event.cpp \
@@ -18,8 +19,11 @@ SOURCES += \
         src/keyboard-event.cpp \
         src/mouse-event.cpp \
         src/node.cpp \
+        src/physics/left-infinite.cpp \
+        src/physics/physics.cpp \
         src/score-down-event.cpp \
         src/score-up-event.cpp \
+        src/sprite.cpp \
         src/utils/randomize.cpp
 
 HEADERS += \
@@ -27,7 +31,9 @@ HEADERS += \
     examples/node-events.h \
     examples/split-screens.h \
     examples/squares.h \
+    games/dino-ai/dino-ai.h \
     games/space-ai/space-ai.h \
+    include/animation/animated-sprite.h \
     include/animation/frame.h \
     include/change-state-event.h \
     include/collision-event.h \
@@ -42,8 +48,13 @@ HEADERS += \
     include/keyboard-event.h \
     include/mouse-event.h \
     include/node.h \
+    include/physics/left-inf-random.h \
+    include/physics/left-infinite.h \
+    include/physics/physics.h \
     include/score-down-event.h \
     include/score-up-event.h \
+    include/sprite.h \
     include/utils/data-time.h \
     include/utils/layout.h \
-    include/utils/randomize.h
+    include/utils/randomize.h \
+

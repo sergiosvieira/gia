@@ -4,6 +4,7 @@
 #include "event.h"
 
 struct CollisionEvent : Event {
+    ~CollisionEvent(){}
     EventType type() override {
         return EventType::Collision;
     }

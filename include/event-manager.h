@@ -11,6 +11,7 @@ struct EventManager {
     using Queue = std::queue<EventPtr>;
     using Map = std::unordered_map<EventType, std::unordered_set<HandlerPtr>>;
     EventManager(){}
+    virtual ~EventManager(){}
     EventManager(EventManager const&) = delete;
     void operator=(EventManager const&) = delete;
     static EventManager& instance() {

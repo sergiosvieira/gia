@@ -9,6 +9,7 @@ struct MouseEvent: Event {
     Vector2 pos = {};
     MouseEvent(MouseButton btn, Vector2 pos):
         code(btn), pos(pos){}
+    ~MouseEvent(){}
     EventType type() override {
         return EventType::MouseClick;
     }

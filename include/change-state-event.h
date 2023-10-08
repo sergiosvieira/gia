@@ -7,7 +7,8 @@
 
 struct ChangeStateEvent : Event {
     GameState state = GameState::None;
-    ChangeStateEvent(GameState state): state(state){}
+    explicit ChangeStateEvent(GameState state): state(state){}
+    ~ChangeStateEvent(){}
     EventType type() override {
         return EventType::ChangeState;
     }

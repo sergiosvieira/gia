@@ -8,6 +8,7 @@ struct HandlerVisitor {
     virtual void visit(const struct ScoreUpEvent&) {}
     virtual void visit(const struct ScoreDownEvent&) {}
     virtual void visit(const struct CollisionEvent&) {}
+    virtual ~HandlerVisitor(){}
 };
 
 #endif // HANDLERVISITOR_H

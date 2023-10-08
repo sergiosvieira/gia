@@ -5,6 +5,7 @@
 
 struct Handler {
     virtual void handle(struct Event& msg) = 0;
+    virtual ~Handler(){}
 };
 
 using HandlerPtr = std::shared_ptr<Handler>;

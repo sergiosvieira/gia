@@ -9,9 +9,9 @@
 #include "include/keyboard-event.h"
 #include "include/event-manager.h"
 #include "include/score-up-event.h"
-#include "include/change-state-event.h"
 #include "include/utils/layout.h"
 #include "include/utils/randomize.h"
+#include "include/animation/animated-sprite.h"
 
 enum class Direction {
     None,
@@ -63,22 +63,16 @@ struct RandomMove: Movement {
 
 template <typename T>
 struct BaseSpaceship: Node {
-    Texture2D texture;
-    Frame frame;
+    AnimatedSpritePtr sprite = nullptr;
     T movement;
     Direction direction = Direction::None;
     BaseSpaceship(const std::string& filename) {
-        texture = LoadTexture(filename.c_str());
+        sprite = std::make_shared<AnimatedSprite>(filename.c_str(), Frame({64.f, 29.f}, {0, 0, 3}, {1, 4}, 0.1));
         initFrame();
     }
     void initFrame() {
         width = 64;
         height = 29;
-        frame.cols = 1; frame.rows = 4;
-        frame.width = 64;
-        frame.height = 29;
-        frame.firstIndex = 0; frame.lastIndex = 3;
-        frame.interval = 0.1;
     }
     void limiter() {
          PtrNode parent = getParent();
@@ -98,14 +92,14 @@ struct BaseSpaceship: Node {
         }
     }
     virtual void update() override {
-        frame.next();
+        sprite->update();
         pos = movement.move(pos, direction);
         limiter();
         Node::update();
         direction = Direction::None;
     }
     void render() override {
-        DrawTexturePro(texture, frame.getRect(), getRect(), {0.f, 0.f}, 0.f, WHITE);
+        sprite->render(getRect());
     }
 };
 
@@ -192,7 +186,7 @@ struct GameScreen: Node {
     PtrNode gameover = nullptr;
     SpaceshipPtr spaceship = nullptr;
     float progressValue = 1.0f;
-    int score = 0.f;
+    int score = 0;
     size_t enemiesCount = 20;
     Vector enemies;
     bool finished = false;

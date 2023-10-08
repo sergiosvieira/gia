@@ -27,7 +27,7 @@ using PtrCircle = std::shared_ptr<Circle>;
 
 void start() {
     Game game("Exemplo 02 - Eventos");
-    PtrCircle ptr = std::make_shared<Circle>(Vector2{400, 300}, 20, RED);
+    PtrNode ptr = std::make_shared<Circle>(Vector2{400, 300}, 20, RED);
     EventManager::instance().subscribe(EventType::KeyPressed, ptr);
     EventManager::instance().subscribe(EventType::MouseClick, ptr);
     game.add(GameState::MainScreen, ptr);

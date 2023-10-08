@@ -7,7 +7,8 @@
 
 struct GameHandler: Handler, HandlerVisitor {
     Game& game;
-    GameHandler(Game& g): game(g){}
+    explicit GameHandler(Game& g): game(g){}
+    ~GameHandler(){}
     void handle(struct Event& event) override {
         event.accept(*this);
     }
@@ -22,8 +23,11 @@ Game::Game(const std::string& title):
 }
 
 Game::~Game() {
-    for (size_t i = 0; i < screens.size(); ++i) {
-        UnloadRenderTexture(*screens[i]);
+    for (size_t i = 0; i < textures.size(); ++i) {
+        RenderTexturePtr scr = textures[i];
+        if (scr && scr.use_count() == 1) {
+            UnloadRenderTexture(*scr);
+        }
     }
     CloseWindow();
 }
@@ -57,11 +61,8 @@ void Game::addScreens() {
     for (size_t i = 0; i < size; ++i) {
         int w = Game::winWidth();
         int h = Game::winHeight();
-        screens.push_back(
-            std::make_shared<RenderTexture2D>(
-                LoadRenderTexture(w, h)
-            )
-        );
+        auto renderTexture = std::make_shared<RenderTexture2D>(LoadRenderTexture(w, h));
+        textures.push_back(renderTexture);
     }
 }
 
@@ -75,26 +76,28 @@ void Game::update() {
 void Game::draw() {
     if (states.find(currentState) == states.end()) return;
     for (size_t i = 0; i < states[currentState].size(); ++i) {
-        BeginTextureMode(*screens[i]);            
+        RenderTexturePtr scr = textures[i];
+        BeginTextureMode(*scr);
             states[currentState][i]->draw();
         EndTextureMode();
     }
 }
 
 void Game::drawScreens() {
-    for (size_t i = 0; i < screens.size(); ++i) {
+    for (size_t i = 0; i < textures.size(); ++i) {
+        RenderTexturePtr scr = textures[i];
         Rectangle src = {
             0.f,
             0.f,
-            static_cast<float>(screens[i]->texture.width),
-            -static_cast<float>(screens[i]->texture.height)
+            static_cast<float>(scr->texture.width),
+            -static_cast<float>(scr->texture.height)
         };
-        float height = screens[i]->texture.height / screens.size();
+        float height = scr->texture.height / textures.size();
         Vector2 dst = {
             0.f,
             i * height
         };
-        DrawTextureRec(screens[i]->texture, src, dst, WHITE);
+        DrawTextureRec(scr->texture, src, dst, WHITE);
     }
 }
 
