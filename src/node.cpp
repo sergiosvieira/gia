@@ -3,16 +3,19 @@
 #include <cstdlib>
 #include "../include/gia-math.h"
 #include "../include/event.h"
-#include "../include/game.h"
 
 Node::Node(const Vector2& pos,
            const Vector2& length):
     pos(pos), width(length.x), height(length.y) {
 }
 
+Node::~Node(){
+    children.erase(children.begin(), children.end());
+}
+
 void Node::add(PtrNode node) {
-    node->parent = std::shared_ptr<Node>(this);
-    children.push_back(node);
+    node->parent = this;
+    children.emplace_back(node);
 }
 
 Rectangle Node::getRect() const {
@@ -20,14 +23,14 @@ Rectangle Node::getRect() const {
 }
 
 void Node::update() {
-    for (PtrNode node: children) {
+    for (PtrNode& node: children) {
         node->pos = node->pos + pos;
         node->update();
         node->pos = node->pos - pos;
     }
 }
 
-const PtrNode Node::getParent() {
+const Node* Node::getParent() {
     return parent;
 }
 

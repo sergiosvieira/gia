@@ -17,15 +17,15 @@ struct Node: Handler, HandlerVisitor {
     bool visible = true;
     Node(){}
     Node(const Vector2& pos, const Vector2& length);
-    virtual ~Node(){}
+    virtual ~Node();
     void add(PtrNode);
     Rectangle getRect() const;
     virtual void update();
     virtual void render() = 0;
-    const PtrNode getParent();
+    const Node* getParent();
     virtual void handle(struct Event& msg) override;
 private:
-    PtrNode parent = nullptr;
+    Node* parent = nullptr;
     Children children;
     friend struct Game;
     void draw();
