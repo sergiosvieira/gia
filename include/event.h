@@ -8,10 +8,10 @@
 struct Event {
     PtrNode sender = nullptr;
     virtual ~Event() {}
-    virtual EventType type() {
+    virtual EventType type() const {
         return EventType::None;
     }
-    virtual void accept(struct HandlerVisitor& visitor) = 0;
+    virtual void accept(struct HandlerVisitor& visitor) const = 0;
 };
 
 using EventPtr = std::shared_ptr<Event>;

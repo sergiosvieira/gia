@@ -8,10 +8,10 @@ struct KeyboardEvent : Event {
     KeyboardKey keyCode = KEY_NULL;
     explicit KeyboardEvent(KeyboardKey code): keyCode(code){}
     ~KeyboardEvent(){}
-    EventType type() override {
+    EventType type() const override {
         return EventType::KeyPressed;
     }
-    void accept(struct HandlerVisitor& visitor) override;
+    void accept(struct HandlerVisitor& visitor) const override;
 };
 
 

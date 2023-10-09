@@ -10,10 +10,10 @@ struct MouseEvent: Event {
     MouseEvent(MouseButton btn, Vector2 pos):
         code(btn), pos(pos){}
     ~MouseEvent(){}
-    EventType type() override {
+    EventType type() const override {
         return EventType::MouseClicked;
     }
-    void accept(struct HandlerVisitor& visitor) override;
+    void accept(struct HandlerVisitor& visitor) const override;
 };
 
 #endif // MOUSECLICKED_H
