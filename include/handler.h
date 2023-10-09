@@ -4,7 +4,7 @@
 #include <memory>
 
 struct Handler {
-    virtual void handle(struct Event& msg) = 0;
+    virtual void handle(const struct Event& msg) = 0;
     virtual ~Handler(){}
 };
 

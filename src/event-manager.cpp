@@ -6,7 +6,7 @@
 #include "include/mouse-event.h"
 #include "include/node.h"
 
-void EventManager::subscribe(EventType type, PtrNode node) {
+void EventManager::subscribe(EventType type, NodePtr node) {
     map[type].insert(node);
 }
 

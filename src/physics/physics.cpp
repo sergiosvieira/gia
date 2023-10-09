@@ -33,7 +33,7 @@ Vector2 Physics::translate(const Vector2& pos, float speed, Orientation o) {
     }
 }
 
-bool Physics::collided(const Rectangle& r1, const Rectangle& r2) {
+bool Physics::collides(const Rectangle& r1, const Rectangle& r2) {
     bool result = CheckCollisionRecs(r1, r2);
     return result;
 }

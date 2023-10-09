@@ -23,8 +23,7 @@ enum class Action {
 
 struct GameOver : Node {
     Color color;
-    GameOver(Color color): Node(), color(color) {
-    }
+    GameOver(Color color): Node(), color(color) {}
     void render() override {
         GuiSetStyle(DEFAULT, TEXT_SIZE, 150);
         GuiSetStyle(DEFAULT, TEXT_SPACING, 10);
@@ -94,7 +93,7 @@ struct BaseDino: Node {
     }
     ~BaseDino(){}
     void update() override {
-        run.update();        
+        run.update();
         pos = movement->move(getRect(), groundRect);
         Node::update();
     }
@@ -124,34 +123,42 @@ struct GameScreen: Node {
     using CactusPtr = std::shared_ptr<Cactus>;
     using Vector = std::vector<CactusPtr>;
     PlayerPtr player = nullptr;
-    PtrNode gameover = nullptr;
+    NodePtr gameover = nullptr;
     Vector cactus = {
         std::make_shared<Cactus>("./games/dino-ai/img/cactus-big.png", Frame({25.f, 50.f}, {0, 0, 5}, {1, 6}, 0.f)),
         std::make_shared<Cactus>("./games/dino-ai/img/cactus-small.png", Frame({17.f, 35.f}, {0, 0, 5}, {1, 6}, 0.f)),
     };
     int score = 0.f;
     bool finished = false;
-    PtrNode ground = nullptr;
-    GameScreen(Color gameoverColor) {
+    NodePtr ground = nullptr;
+    GameScreen(Color color): Node(),
+        gameover(std::make_shared<GameOver>(color)),
+        ground(std::make_shared<Ground>()) {
         width = Game::winWidth();
         height = Game::winHeight() / 2.f;
-        ground = std::make_shared<Ground>();
-        add(ground);
-        Rectangle groundRect = ground->getRect();
-        player = std::make_shared<Player>(groundRect);
+        makePlayer();
+        children.emplace_back(ground);
+        makeCacti();
+        makeGameOver();
+    }
+    ~GameScreen(){}
+    void makePlayer() {
+        player = std::make_shared<Player>(ground->getRect());
         player->pos.x = player->width;
         player->pos.y = height - player->height * 1.3f;
-        add(player);
+        children.emplace_back(player);
+    }
+    void makeCacti() {
         for (auto& c: cactus) {
-            add(c);
+            children.emplace_back(c);
         }
-        gameover = std::make_shared<GameOver>(gameoverColor);
+    }
+    void makeGameOver() {
         gameover->width = width;
         gameover->height = height;
         gameover->visible = false;
-        add(gameover);
+        children.emplace_back(gameover);
     }
-    ~GameScreen(){}
     void finish() {
         player->visible = false;
         for (auto& e: cactus) {
@@ -164,7 +171,7 @@ struct GameScreen: Node {
     void update() override {
         if (finished) return;
         for (auto& c: cactus) {
-            if (Physics::collided(padding(player->getRect(), 10.f, 5.f), c->getRect())) {
+            if (Physics::collides(padding(player->getRect(), 10.f, 5.f), c->getRect())) {
                 finish();
             }
         }

@@ -8,25 +8,25 @@
 #include "handler-visitor.h"
 
 struct Node;
-using PtrNode = std::shared_ptr<Node>;
-using Children = std::vector<PtrNode>;
+using NodePtr = std::shared_ptr<Node>;
+using Vector = std::vector<NodePtr>;
 
-struct Node: Handler, HandlerVisitor {
-    Vector2 pos = {};
-    float width = 0.f, height = 0.f;
+struct Node : std::enable_shared_from_this<Node>, Handler, HandlerVisitor {
+    std::weak_ptr<Node> parent;
+    Vector children;
+    Vector2 pos;
+    float width;
+    float height;
     bool visible = true;
-    Node(){}
+    Node();
     Node(const Vector2& pos, const Vector2& length);
     virtual ~Node();
-    void add(PtrNode);
+    void add(NodePtr node);
     Rectangle getRect() const;
+    void handle(const struct Event& event) override;
     virtual void update();
     virtual void render() = 0;
-    const Node* getParent();
-    virtual void handle(struct Event& msg) override;
 private:
-    Node* parent = nullptr;
-    Children children;
     friend struct Game;
     void draw();
 };

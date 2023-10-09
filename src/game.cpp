@@ -5,15 +5,14 @@
 #include "../include/event-manager.h"
 #include "../include/change-state-event.h"
 
-struct GameHandler: Handler, HandlerVisitor {
+struct GameHandler : Handler, HandlerVisitor {
     Game& game;
-    explicit GameHandler(Game& g): game(g){}
-    ~GameHandler(){}
-    void handle(struct Event& event) override {
+    explicit GameHandler(Game& g) : game(g) {}
+    void handle(const Event& event) override {
         event.accept(*this);
     }
-    virtual void visit(const ChangeStateEvent& msg) override {
-        game.currentState = msg.state;
+    void visit(const ChangeStateEvent& event) override {
+        game.currentState = event.state;
     }
 };
 
@@ -32,8 +31,8 @@ Game::~Game() {
     CloseWindow();
 }
 
-void Game::add(GameState state, PtrNode node) {
-    states[state].push_back(node);
+void Game::add(GameState state, NodePtr node) {
+    states[state].emplace_back(node);
 }
 
 HandlerPtr Game::get(GameState state, size_t index) {

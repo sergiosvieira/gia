@@ -24,7 +24,7 @@ struct Jump: Physics {
             pos.y -= gravity->vel.y + accel;
             accel -= 0.4f;
         }
-        if (Physics::collided({pos.x, pos.y, rect.width, rect.height}, grect)) {
+        if (Physics::collides({pos.x, pos.y, rect.width, rect.height}, grect)) {
             pos.y = grect.y - (rect.height - 2.f);
             reset();
             accel = max;

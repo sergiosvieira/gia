@@ -7,7 +7,7 @@
 #include "game-state.h"
 #include "node.h"
 
-using StateMap = std::unordered_map<GameState, std::vector<PtrNode>>;
+using StateMap = std::unordered_map<GameState, std::vector<NodePtr>>;
 
 struct GameHandler;
 
@@ -17,7 +17,7 @@ struct Game {
     void run();
     static float winWidth();
     static float winHeight();
-    void add(GameState, PtrNode);
+    void add(GameState, NodePtr);
     HandlerPtr get(GameState, size_t index);
     Rectangle getRect() const;
 private:

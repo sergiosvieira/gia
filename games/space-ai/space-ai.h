@@ -24,7 +24,7 @@ enum class Direction {
 struct Movement {
     using Map = std::unordered_map<Direction, std::function<Vector2(Vector2, float)>>;
     float speed = 5.f;
-    PtrNode node = nullptr;
+    NodePtr node = nullptr;
     virtual Vector2 move(Vector2, Direction d = Direction::None) = 0;
     virtual ~Movement(){}
     Map map = {
@@ -75,9 +75,8 @@ struct BaseSpaceship: Node {
         height = 29;
     }
     void limiter() {
-        const Node* parent = getParent();
         if (parent != nullptr) {
-            if ((pos.x + width)  > (parent->pos.x + parent->width)) {
+            if ((pos.x + width)  > (parent.pos.x + parent.width)) {
                 pos.x = parent->width - width;
             }
             if (pos.x < parent->pos.x) {

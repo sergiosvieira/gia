@@ -25,7 +25,7 @@ struct Physics {
     Physics();
     virtual ~Physics();
     static Vector2 translate(const Vector2&, float, Orientation);
-    static bool collided(const Rectangle& r1, const Rectangle& r2);
+    static bool collides(const Rectangle& r1, const Rectangle& r2);
     virtual Vector2 move(const Rectangle&, const Rectangle&, Orientation = Orientation::None) = 0;
 };
 
