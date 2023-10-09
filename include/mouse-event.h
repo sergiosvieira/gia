@@ -11,7 +11,7 @@ struct MouseEvent: Event {
         code(btn), pos(pos){}
     ~MouseEvent(){}
     EventType type() override {
-        return EventType::MouseClick;
+        return EventType::MouseClicked;
     }
     void accept(struct HandlerVisitor& visitor) override;
 };

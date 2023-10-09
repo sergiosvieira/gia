@@ -52,7 +52,7 @@ void Game::init() {
     );
     SetTargetFPS(60);
     gameHandler = std::make_shared<GameHandler>(*this);
-    EventManager::instance().subscribe(EventType::ChangeState, gameHandler);
+    EventManager::instance().subscribe(EventType::StateChanged, gameHandler);
 }
 
 void Game::addScreens() {

@@ -3,11 +3,11 @@
 
 enum class EventType {
     None,
-    MouseClick,
+    MouseClicked,
     KeyPressed,
-    ChangeState,
-    ScoreUp,
-    ScoreDown,
+    StateChanged,
+    ScoreIncreased,
+    ScoreDecreased,
     Collision
 };
 

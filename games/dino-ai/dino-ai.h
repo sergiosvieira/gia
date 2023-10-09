@@ -184,7 +184,7 @@ void start() {
     game.add(GameState::MainScreen, std::make_shared<GameScreen<Human>>(RED));
     HandlerPtr human = game.get(GameState::MainScreen, 0);
     EventManager::instance().subscribe(EventType::KeyPressed, human);
-    EventManager::instance().subscribe(EventType::ScoreUp, human);
+    EventManager::instance().subscribe(EventType::ScoreIncreased, human);
     game.add(GameState::MainScreen, std::make_shared<GameScreen<DinoAI>>(MAROON));
     game.run();
 }

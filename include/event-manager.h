@@ -24,8 +24,8 @@ struct EventManager {
 private:
     Map map = {
         {EventType::KeyPressed, {}},
-        {EventType::MouseClick, {}},
-        {EventType::ChangeState, {}},
+        {EventType::MouseClicked, {}},
+        {EventType::StateChanged, {}},
     };
     Queue events;
     friend Game;

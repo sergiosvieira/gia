@@ -10,7 +10,7 @@ struct ChangeStateEvent : Event {
     explicit ChangeStateEvent(GameState state): state(state){}
     ~ChangeStateEvent(){}
     EventType type() override {
-        return EventType::ChangeState;
+        return EventType::StateChanged;
     }
     void accept(struct HandlerVisitor& visitor) override;
 };

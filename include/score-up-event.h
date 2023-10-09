@@ -5,7 +5,7 @@
 
 struct ScoreUpEvent : Event {
     EventType type() override {
-        return EventType::ScoreUp;
+        return EventType::ScoreIncreased;
     }
     ~ScoreUpEvent(){}
     void accept(struct HandlerVisitor& visitor) override;
