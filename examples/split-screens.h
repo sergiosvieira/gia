@@ -7,24 +7,24 @@
 
 struct Level1 : Node {
     Level1(): Node() {
-        width = 50;
-        height = 50;
+        dim.width = 50;
+        dim.height = 50;
     }
     void render() override {
         ClearBackground(YELLOW);
-        DrawRectangleRec({pos.x, pos.y, width, height}, MAROON);
+        DrawRectangleRec(getRect(), MAROON);
         DrawText("Screen 01", 10, 10, 20, WHITE);
     }
 };
 
 struct Level2 : Node {
     Level2(): Node() {
-        width = 50;
-        height = 50;
+        dim.width = 50;
+        dim.height = 50;
     }    
     void render() override {
         ClearBackground(GREEN);
-        DrawRectangleRec({pos.x, pos.y, width, height}, BLUE);
+        DrawRectangleRec(getRect(), BLUE);
         DrawText("Screen 02", 10, 10, 20, WHITE);
     }
 };

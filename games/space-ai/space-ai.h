@@ -12,62 +12,19 @@
 #include "include/utils/layout.h"
 #include "include/utils/randomize.h"
 #include "include/animation/animated-sprite.h"
-
-enum class Direction {
-    None,
-    Left,
-    Right,
-    Up,
-    Down
-};
-
-struct Movement {
-    using Map = std::unordered_map<Direction, std::function<Vector2(Vector2, float)>>;
-    float speed = 5.f;
-    NodePtr node = nullptr;
-    virtual Vector2 move(Vector2, Direction d = Direction::None) = 0;
-    virtual ~Movement(){}
-    Map map = {
-        {Direction::None, [](Vector2 pos, float speed){return pos;}},
-        {Direction::Left, [](Vector2 pos, float speed){pos.x -= speed; return pos;}},
-        {Direction::Right, [](Vector2 pos, float speed){pos.x += speed; return pos;}},
-        {Direction::Up, [](Vector2 pos, float speed){pos.y -= speed; return pos;}},
-        {Direction::Down, [](Vector2 pos, float speed){pos.y += speed; return pos;}},
-    };
-    static Direction KeyCodeToDirection(const KeyboardKey& code) {
-        static std::unordered_map<KeyboardKey, Direction> map = {
-            {KEY_LEFT, Direction::Left},
-            {KEY_RIGHT, Direction::Right},
-            {KEY_UP, Direction::Up},
-            {KEY_DOWN, Direction::Down},
-        };
-        if (map.find(code) == map.end()) return Direction::None;
-        return map[code];
-    }
-};
-
-struct ByKeyboard: Movement {
-    Vector2 move(Vector2 pos, Direction dir) override {
-        return map[dir](pos, speed);
-    }
-};
-
-struct RandomMove: Movement {
-    using Map = std::unordered_map<Direction, std::function<Vector2()>>;
-    Vector2 move(Vector2 pos, Direction dir) override {
-        std::vector<Direction> v = {Direction::None, Direction::Left, Direction::Right, Direction::Up, Direction::Down};
-        Direction d = Randomize::elements<Direction>(v);
-        return map[d](pos, speed);
-    }
-};
+#include "include/physics/physics.h"
+#include "include/physics/keyboard.h"
+#include "include/physics/random-orientation.h"
+#include "include/physics/left-inf-random.h"
 
 template <typename T>
 struct BaseSpaceship: Node {
     AnimatedSpritePtr sprite = nullptr;
-    T movement;
-    Direction direction = Direction::None;
-    BaseSpaceship(const std::string& filename) {
+    std::shared_ptr<T> movement = nullptr;
+    Physics::Orientation o = Physics::Orientation::None;
+    BaseSpaceship(const std::string& filename): Node() {
         sprite = std::make_shared<AnimatedSprite>(filename.c_str(), Frame({64.f, 29.f}, {0, 0, 3}, {1, 4}, 0.1));
+        movement = std::make_shared<T>(Vector2{0.f, 0.1f});
         initFrame();
     }
     void initFrame() {
@@ -75,54 +32,47 @@ struct BaseSpaceship: Node {
         height = 29;
     }
     void limiter() {
-        if (parent != nullptr) {
-            if ((pos.x + width)  > (parent.pos.x + parent.width)) {
-                pos.x = parent->width - width;
-            }
-            if (pos.x < parent->pos.x) {
-                pos.x = parent->pos.x;
-            }
-            if ((pos.y + height) > (parent->pos.y + parent->height)) {
-                pos.y = parent->height - height;
-            }
-            if (pos.y < parent->pos.y) {
-                pos.y = parent->pos.y;
-            }
+        float w = Game::winWidth();
+        float h = Game::winHeight() / 2.f;
+        if ((pos.x + width) > w) {
+            pos.x = w - width;
+        }
+        if (pos.x < 0) {
+            pos.x = 0;
+        }
+        if ((pos.y + height) > h) {
+            pos.y = h - height;
+        }
+        if (pos.y < 0) {
+            pos.y = 0;
         }
     }
     virtual void update() override {
         sprite->update();
-        pos = movement.move(pos, direction);
+        pos = movement->move(sprite->frame.getRect(), {}, o);
         limiter();
         Node::update();
-        direction = Direction::None;
+        o = Physics::Orientation::None;
     }
     void render() override {
         sprite->render(getRect());
     }
 };
 
-struct Spaceship: BaseSpaceship<ByKeyboard> {
+struct Spaceship: BaseSpaceship<Keyboard> {
     Spaceship(): BaseSpaceship("./games/space-ai/img/spaceship.png"){}
     void visit(const KeyboardEvent& msg) override {
-        direction = Movement::KeyCodeToDirection(msg.keyCode);
+//        o = Physics::KeyCodeToDirection(msg.keyCode);
     }
 };
 
-struct SpaceshipIA: BaseSpaceship<RandomMove> {
+struct SpaceshipIA: BaseSpaceship<RandomOrientation> {
     SpaceshipIA(): BaseSpaceship("./games/space-ai/img/spaceshipia.png"){}
-};
-
-struct RightToLeft: Movement {
-    Vector2 move(Vector2 pos, Direction dir = Direction::None) override {
-        std::vector<Direction> v = {Direction::None, Direction::Left, Direction::Right, Direction::Up, Direction::Down};
-        return map[dir](pos, speed);
-    }
 };
 
 struct Enemy: Node {
     Texture2D texture = LoadTexture("./games/space-ai/img/ufo.png");
-    RightToLeft movement;
+    LeftInfiniteRandom movement;
     Frame frame;
     float wwidth = 0.f, wheight = 0.f;
     Enemy(float w, float h): wwidth(w), wheight(h) {
@@ -139,7 +89,7 @@ struct Enemy: Node {
     }
     void update() override {
         frame.next();
-        pos = movement.move(pos, Direction::Left);
+        pos = movement.move(frame.getRect(), {});
         checkPosition();
         Node::update();
     }
@@ -148,7 +98,7 @@ struct Enemy: Node {
         pos.x = wwidth + Randomize::genGAP(vwidth, width);
         pos.y = Randomize::genGAP(wheight, height);
         frame.interval = Randomize::gen(0.1f, 0.3f);
-        movement.speed = Randomize::gen(2.5f, 6.5f);
+        movement.vel.x = Randomize::gen(2.5f, 6.5f);
     }
     void checkPosition() {
         if (pos.x + width < 0) {
@@ -182,7 +132,7 @@ struct GameScreen: Node {
     using SpaceshipPtr = std::shared_ptr<T>;
     using EnemyPtr = std::shared_ptr<Enemy>;
     using Vector = std::vector<EnemyPtr>;
-    PtrNode gameover = nullptr;
+    NodePtr gameover = nullptr;
     SpaceshipPtr spaceship = nullptr;
     float progressValue = 1.0f;
     int score = 0;
@@ -199,19 +149,19 @@ struct GameScreen: Node {
         float px = Layout::center(width, spaceship->width);
         float py = Layout::center(height, spaceship->height);
         spaceship->pos = {px, py};
-        add(spaceship);
+        children.emplace_back(spaceship);
         enemies.reserve(enemiesCount);
         for (size_t i = 0; i < enemiesCount; ++i) {
             EnemyPtr e = std::make_shared<Enemy>(width, height);
             e->randomize();
-            add(e);
-            enemies.push_back(e);
+            children.emplace_back(e);
+            enemies.emplace_back(e);
         }
         gameover = std::make_shared<GameOver>(gameoverColor);
         gameover->width = width;
         gameover->height = height;
         gameover->visible = false;
-        add(gameover);
+        children.emplace_back(gameover);
     }
     void hide() {
         spaceship->visible = false;
@@ -255,8 +205,8 @@ void start() {
     HandlerPtr human = game.get(GameState::MainScreen, 0);
     HandlerPtr artif = game.get(GameState::MainScreen, 1);
     EventManager::instance().subscribe(EventType::KeyPressed, human);
-    EventManager::instance().subscribe(EventType::ScoreUp, human);
-    EventManager::instance().subscribe(EventType::ScoreUp, artif);
+    EventManager::instance().subscribe(EventType::ScoreIncreased, human);
+    EventManager::instance().subscribe(EventType::ScoreIncreased, artif);
     game.run();
 }
 

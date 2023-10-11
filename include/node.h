@@ -7,26 +7,27 @@
 #include "handler.h"
 #include "handler-visitor.h"
 
-struct Node;
-using NodePtr = std::shared_ptr<Node>;
-using Vector = std::vector<NodePtr>;
-
 struct Node : std::enable_shared_from_this<Node>, Handler, HandlerVisitor {
-    std::weak_ptr<Node> parent;
-    Vector children;
-    Vector2 pos;
-    float width;
-    float height;
+    using NodeShared = std::shared_ptr<Node>;
+    using Vector = std::vector<NodeShared>;
+    struct Dimensions {
+        float width = 0.f;
+        float height = 0.f;
+    };
+    Vector2 pos = {};
+    Dimensions dim ;
     bool visible = true;
-    Node();
-    Node(const Vector2& pos, const Vector2& length);
+    Node(const Vector2& pos = {}, const Dimensions& dim = {0.f, 0.f}, NodeShared parent = nullptr);
     virtual ~Node();
-    void add(NodePtr node);
+    void add(NodeShared node);
     Rectangle getRect() const;
+    NodeShared getParent();
     void handle(const struct Event& event) override;
     virtual void update();
     virtual void render() = 0;
 private:
+    Vector children;
+    NodeShared parent = nullptr;
     friend struct Game;
     void draw();
 };

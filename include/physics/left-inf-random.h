@@ -6,9 +6,9 @@
 #include "include/game.h"
 
 struct LeftInfiniteRandom: Physics {
-    float speed = 5.f;
-    Vector2 move(const Rectangle& rect, const Rectangle& grect, Orientation) override {
-        Vector2 result = Physics::translate({rect.x, rect.y}, speed, Orientation::Left);
+    Vector2 move(const Rectangle& rect, const Rectangle& grect, Orientation = Orientation::None) override {
+        vel.x = vel.y;
+        Vector2 result = Physics::translate({rect.x, rect.y}, vel.x, Orientation::Left);
         if (result.x < -rect.width) {
             result.x = Game::winWidth() + Randomize::gen(Game::winWidth()/2.f, Game::winWidth());
         }

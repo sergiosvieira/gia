@@ -7,17 +7,16 @@
 #include "game-state.h"
 #include "node.h"
 
-using StateMap = std::unordered_map<GameState, std::vector<NodePtr>>;
-
 struct GameHandler;
 
 struct Game {
+    using StateMap = std::unordered_map<GameState, Node::Vector>;
     explicit Game(const std::string&);
     virtual ~Game();
     void run();
     static float winWidth();
     static float winHeight();
-    void add(GameState, NodePtr);
+    void add(GameState, Node::NodeShared);
     HandlerPtr get(GameState, size_t index);
     Rectangle getRect() const;
 private:

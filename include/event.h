@@ -6,7 +6,7 @@
 
 
 struct Event {
-    NodePtr sender = nullptr;
+    Node::NodeShared sender = nullptr;
     virtual ~Event() {}
     virtual EventType type() const {
         return EventType::None;

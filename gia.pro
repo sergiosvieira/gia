@@ -51,12 +51,15 @@ HEADERS += \
     include/node.h \
     include/physics/gravity.h \
     include/physics/jump.h \
+    include/physics/keyboard.h \
     include/physics/left-inf-random.h \
     include/physics/left-infinite.h \
     include/physics/physics.h \
+    include/physics/random-orientation.h \
     include/score-down-event.h \
     include/score-up-event.h \
     include/sprite.h \
+    include/tests/node-tests.h \
     include/utils/data-time.h \
     include/utils/layout.h \
     include/utils/randomize.h \

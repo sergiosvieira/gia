@@ -31,7 +31,7 @@ Game::~Game() {
     CloseWindow();
 }
 
-void Game::add(GameState state, NodePtr node) {
+void Game::add(GameState state, Node::NodeShared node) {
     states[state].emplace_back(node);
 }
 
@@ -61,7 +61,7 @@ void Game::addScreens() {
         int w = Game::winWidth();
         int h = Game::winHeight();
         auto renderTexture = std::make_shared<RenderTexture2D>(LoadRenderTexture(w, h));
-        textures.push_back(renderTexture);
+        textures.emplace_back(renderTexture);
     }
 }
 

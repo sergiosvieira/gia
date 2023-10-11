@@ -50,7 +50,7 @@ struct Cactus: Node {
     ~Cactus(){}
     void update() override {
         pos = moviment.move(getRect(), {}, Physics::Orientation::Left);
-        if (pos.x + width - moviment.speed < 0) {
+        if (pos.x + width - 10 < 0) {
             EventManager::instance().emmit(std::make_shared<ScoreUpEvent>());
         }
         Node::update();
@@ -137,7 +137,7 @@ struct GameScreen: Node {
         width = Game::winWidth();
         height = Game::winHeight() / 2.f;
         makePlayer();
-        children.emplace_back(ground);
+        add(ground);
         makeCacti();
         makeGameOver();
     }
@@ -146,7 +146,7 @@ struct GameScreen: Node {
         player = std::make_shared<Player>(ground->getRect());
         player->pos.x = player->width;
         player->pos.y = height - player->height * 1.3f;
-        children.emplace_back(player);
+        add(player);
     }
     void makeCacti() {
         for (auto& c: cactus) {
@@ -157,7 +157,7 @@ struct GameScreen: Node {
         gameover->width = width;
         gameover->height = height;
         gameover->visible = false;
-        children.emplace_back(gameover);
+        add(gameover);
     }
     void finish() {
         player->visible = false;

@@ -8,37 +8,34 @@
 #include "../include/gia-math.h"
 
 struct Square : Node {
-    Vector2 vel;
-    Color color;
-    Square(
-        const Vector2 pos,
-        const Vector2 length,
-        const Vector2 vel = {0.0f, 0.f},
-        Color color = BLACK): Node(pos, length), vel(vel), color(color){}
+    Vector2 vel = {};
+    Color color = WHITE;
+    Square(const Vector2& pos = {0.f, 0.f},
+           const Node::Dimensions& dim = {0.f, 0.f},
+           Node::NodeShared parent = nullptr,
+           const Vector2& vel = {0.f, 0.f},
+           Color color = BLACK): Node(pos, dim, parent), vel(vel), color(color){}
     void render() override {
+        ClearBackground(BLACK);
         DrawRectangleRec(getRect(), color);
     }
     void update() override {
         pos = pos + vel;
-        const Node* parent = getParent();
-        if (parent != nullptr) {
-            if ((pos.x + width)  > (parent->pos.x + parent->width)
-                    || pos.x < parent->pos.x) {
-                vel.x *= -1.0;
-            }
-            if ((pos.y + height)  > (parent->pos.y + parent->height)
-                    || pos.y < parent->pos.y) {
-                vel.y *= -1.0;
-            }
+        NodeShared parent = getParent();
+        if (parent == nullptr) return;
+        if ((pos.x + dim.width)  > (parent->pos.x + parent->dim.width)
+                || pos.x < parent->pos.x) {
+            vel.x *= -1.0;
+        }
+        if ((pos.y + dim.height)  > (parent->pos.y + parent->dim.height)
+                || pos.y < parent->pos.y) {
+            vel.y *= -1.0;
         }
         Node::update();
     }
 };
 
-using PtrSquare = std::shared_ptr<Square>;
-using Vector = std::vector<PtrSquare>;
-
-void start() {
+void start() {    
     Game game("Exemplo 01 - Quadrados");
     std::vector<Color> colors = {
         {255, 153, 204, 255},
@@ -46,32 +43,29 @@ void start() {
         {153, 204, 255, 255},
         {204, 255, 153, 255}
     };
-    PtrSquare fase1 = std::make_shared<Square>(
+    Node::NodeShared ptr = std::make_shared<Square>(
         Vector2{0.0, 0.0},
-        Vector2{Game::winWidth(), Game::winHeight()}
+        Node::Dimensions{Game::winWidth(), Game::winHeight()}
     );
 
     size_t size = 10;
-    Vector v = Vector(size + 1, nullptr);
-    v[0] = fase1;
+    auto previous = ptr;
     float d = 1.1, vel = 1.f;
-    for (size_t i = 1; i <= size; ++i) {
-        PtrSquare node = std::make_shared<Square>(
+    for (size_t i = 1; i < size ; ++i) {
+        Node::NodeShared node = std::make_shared<Square>(
             Vector2{10.0, 10.0},
-            Vector2{Game::winWidth()/d, Game::winHeight()/d},
+            Node::Dimensions{Game::winWidth()/d, Game::winHeight()/d},
+            previous,
             Vector2{vel, vel},
             colors[(i - 1) % 4]
         );
-        v[i] = node;
-        PtrNode pred = v[i - 1];
-        if (pred != nullptr) {
-            pred->add(v[i]);
-        }
+        previous->add(node);
+        previous = node;
         d *= 1.1f;
         vel *= 1.1;
     }
-    game.add(GameState::MainScreen, fase1);
-    game.add(GameState::MainScreen, fase1);
+    game.add(GameState::MainScreen, ptr);
+    game.add(GameState::MainScreen, ptr);
     game.run();
 }
 

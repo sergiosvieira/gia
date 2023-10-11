@@ -4,33 +4,37 @@
 #include "include/event.h"
 #include "include/gia-math.h"
 
-Node::Node(){}
+Node::Node(const Vector2& pos,
+           const Dimensions& dim,
+           NodeShared parent): pos(pos),  dim(dim), parent(parent) {
 
-Node::Node(const Vector2& pos, const Vector2& length)
-    : pos(pos), width(length.x), height(length.y) {}
+}
 
 Node::~Node(){
     children.clear();
 }
 
-void Node::add(NodePtr node) {
-    node->parent = shared_from_this();
+void Node::add(NodeShared node) {
     children.emplace_back(node);
 }
 
 void Node::handle(const struct Event& event) {
     event.accept(*this);
-    for (const NodePtr& node : children) {
+    for (auto node : children) {
         node->handle(event);
     }
 }
 
 Rectangle Node::getRect() const {
-    return {pos.x, pos.y, width, height};
+    return {pos.x, pos.y, dim.width, dim.height};
+}
+
+Node::NodeShared Node::getParent() {
+    return parent;
 }
 
 void Node::update() {
-    for (NodePtr& node: children) {
+    for (auto& node: children) {
         node->pos = node->pos + pos;
         node->update();
         node->pos = node->pos - pos;
@@ -39,7 +43,7 @@ void Node::update() {
 
 void Node::draw() {
     if (visible) render();
-    for (NodePtr& node: children) {
+    for (auto& node: children) {
         node->pos = node->pos + pos;
         if (node->visible) node->draw();
         node->pos = node->pos - pos;
