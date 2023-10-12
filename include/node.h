@@ -19,13 +19,13 @@ struct Node : std::enable_shared_from_this<Node>, Handler, HandlerVisitor {
     bool visible = true;
     Node(const Vector2& pos = {}, const Dimensions& dim = {0.f, 0.f}, NodeShared parent = nullptr);
     virtual ~Node();
-    void add(NodeShared node);
+    virtual void add(NodeShared node);
     Rectangle getRect() const;
     NodeShared getParent();
     void handle(const struct Event& event) override;
     virtual void update();
     virtual void render() = 0;
-private:
+protected:
     Vector children;
     NodeShared parent = nullptr;
     friend struct Game;

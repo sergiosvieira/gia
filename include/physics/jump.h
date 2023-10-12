@@ -18,7 +18,7 @@ struct Jump: Physics {
     ~Jump(){}
     float max = 8.f;
     float accel = max;
-    virtual Vector2 move(const Rectangle& rect, const Rectangle& grect, Orientation = Orientation::None) override {
+    virtual Vector2 move(const Rectangle& rect, Orientation = Orientation::None, const Rectangle& grect = {}) override {
         Vector2 pos = {rect.x, rect.y};
         if (currentAction == Action::Jumping) {
             pos.y -= gravity->vel.y + accel;
@@ -28,7 +28,7 @@ struct Jump: Physics {
             pos.y = grect.y - (rect.height - 2.f);
             reset();
             accel = max;
-        } else pos = gravity->move({pos.x, pos.y, rect.width, rect.height}, grect);
+        } else pos = gravity->move({pos.x, pos.y, rect.width, rect.height}, Orientation::None, grect);
         return pos;
     }
     void reset() {

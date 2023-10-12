@@ -20,10 +20,12 @@ SOURCES += \
         src/mouse-event.cpp \
         src/node.cpp \
         src/physics/left-infinite.cpp \
+        src/physics/movement-limiter.cpp \
         src/physics/physics.cpp \
         src/score-down-event.cpp \
         src/score-up-event.cpp \
         src/sprite.cpp \
+        src/utils/layout.cpp \
         src/utils/randomize.cpp
 
 HEADERS += \
@@ -32,6 +34,7 @@ HEADERS += \
     examples/split-screens.h \
     examples/squares.h \
     games/dino-ai/dino-ai.h \
+    games/scenes/gameover.h \
     games/space-ai/space-ai.h \
     include/animation/animated-sprite.h \
     include/animation/frame.h \
@@ -54,6 +57,7 @@ HEADERS += \
     include/physics/keyboard.h \
     include/physics/left-inf-random.h \
     include/physics/left-infinite.h \
+    include/physics/movement-limiter.h \
     include/physics/physics.h \
     include/physics/random-orientation.h \
     include/score-down-event.h \

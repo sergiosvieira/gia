@@ -5,17 +5,25 @@
 #include <random>
 
 struct Randomize {
-    using DistInt = std::uniform_int_distribution<int>;
-    using DistFlo = std::uniform_real_distribution<float>;
-    static int gen(int min, int max);
-    static float gen(float min, float max);
-    static float genGAP(float max, float min);
+    Randomize(){}
+    virtual ~Randomize(){}
+    Randomize(Randomize const&) = delete;
+    void operator=(Randomize const&) = delete;
+    static Randomize& instance() {
+        static Randomize self;
+        return self;
+    }
+    int gen(int min, int max);
+    float gen(float min, float max);
+    float genGAP(float max, float min);
     template <typename T>
-    static T elements(const std::vector<T>& v) {
+    T elements(const std::vector<T>& v) {
         if (v.empty()) return T();
         int randomIndex = gen(0, v.size() - 1);
         return v[randomIndex];
     }
+private:
+    std::random_device rd;
 };
 
 #endif // RANDOMIZE_H

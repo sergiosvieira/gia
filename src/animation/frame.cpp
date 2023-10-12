@@ -3,10 +3,10 @@
 #include "raylib.h"
 
 Rectangle Frame::getRect() const {
-    int row = currentIndex / cols;
-    int col = currentIndex % cols;
-    float x = static_cast<float>(col * width);
-    float y = static_cast<float>(row * height);
+    int row = currentIndex / rows;
+    int col = currentIndex / cols;
+    float x = static_cast<float>(row * width);
+    float y = static_cast<float>(col * height);
     return {x, y, width, height};
 }
 

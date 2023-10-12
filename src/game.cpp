@@ -39,9 +39,22 @@ HandlerPtr Game::get(GameState state, size_t index) {
     return states[state][index];
 }
 
-Rectangle Game::getRect() const {
+Rectangle Game::getRect()  {
     return {0.f, 0.f, winWidth(), winHeight()};
 }
+
+Rectangle Game::halfHeightRect() {
+    return {0.f, 0.f, winWidth(), winHeight()/2.f};
+}
+
+Rectangle Game::halfWidthRect() {
+    return {0.f, 0.f, winWidth()/2.f, winHeight()};
+}
+
+Rectangle Game::halfRect() {
+    return {0.f, 0.f, winWidth()/2.f, winHeight()/2.f};
+}
+
 
 void Game::init() {
     InitWindow(

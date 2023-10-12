@@ -4,17 +4,16 @@
 #include <cmath>
 #include "raylib.h"
 
-
 int Randomize::gen(int min, int max) {
-    static std::mt19937 generator;
-    DistInt distribution(min, max);
+    std::mt19937 generator(rd());
+    std::uniform_int_distribution<int> distribution(min, max);
     int result = distribution(generator);
     return result;
 }
 
 float Randomize::gen(float min, float max) {
-    static std::mt19937 generator;
-    DistFlo distribution(min, max);
+    std::mt19937 generator(rd());
+    std::uniform_real_distribution<float> distribution(min, max);
     float result = distribution(generator);
     return result;
 }

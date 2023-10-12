@@ -18,7 +18,10 @@ struct Game {
     static float winHeight();
     void add(GameState, Node::NodeShared);
     HandlerPtr get(GameState, size_t index);
-    Rectangle getRect() const;
+    static Rectangle getRect();
+    static Rectangle halfHeightRect();
+    static Rectangle halfWidthRect();
+    static Rectangle halfRect();
 private:
     using RenderTexturePtr = std::shared_ptr<RenderTexture2D>;
     using Vector = std::vector<RenderTexturePtr>;

@@ -13,7 +13,7 @@
 #include "include/physics/jump-random.h"
 #include "include/gia-math.h"
 #include "include/score-up-event.h"
-
+#include "include/physics/physics.h"
 
 enum class Action {
     None,
@@ -21,36 +21,21 @@ enum class Action {
     Crounch
 };
 
-struct GameOver : Node {
-    Color color;
-    GameOver(Color color): Node(), color(color) {}
-    void render() override {
-        GuiSetStyle(DEFAULT, TEXT_SIZE, 150);
-        GuiSetStyle(DEFAULT, TEXT_SPACING, 10);
-        GuiSetStyle( DEFAULT, TEXT_COLOR_NORMAL, 0xFFFFFFFF);
-        GuiSetStyle(LABEL, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
-        ClearBackground(color);
-        GuiSetStyle(DEFAULT, TEXT_SIZE, 100);
-        GuiLabel({0, 0, width, height}, "GAME OVER");
-    }
-};
-
-
 struct Cactus: Node {
     SpritePtr sprite = nullptr;
     Frame frame;
-    LeftInfiniteRandom moviment;
+    LeftInfiniteRandom input{{5.f, 5.f}, LeftInfiniteRandom::Type::Horizontal};
     explicit Cactus(const std::string& filename, const Frame& frame): Node(),
         sprite(std::make_shared<Sprite>(filename)), frame(frame){
-        width = frame.width;
-        height = frame.height;
+        dim.width = frame.width;
+        dim.height = frame.height;
         pos.y = (Game::winHeight() / 2.f) - frame.height - 12;
         pos.x = Game::winWidth();/*moviment.move(getRect(), {}, Physics::Orientation::Left);*/
     }
     ~Cactus(){}
     void update() override {
-        pos = moviment.move(getRect(), {}, Physics::Orientation::Left);
-        if (pos.x + width - 10 < 0) {
+        pos = input.move(getRect(), Physics::Orientation::Left);
+        if (pos.x + dim.width - 10 < 0) {
             EventManager::instance().emmit(std::make_shared<ScoreUpEvent>());
         }
         Node::update();
@@ -64,13 +49,13 @@ struct Ground: Node {
     Sprite sprite = Sprite{"./games/dino-ai/img/ground.png"};
     LeftInfinite movement;
     Ground(): Node() {
-        width = sprite.texture->width;
-        height = sprite.texture->height;
-        pos.y = (Game::winHeight() / 2.f) - height * 2;
+        dim.width = sprite.texture->width;
+        dim.height = sprite.texture->height;
+        pos.y = (Game::winHeight() / 2.f) - dim.height * 2;
     }
     ~Ground(){}
     void update() override {
-        pos = movement.move(getRect(), {}, Physics::Orientation::None);
+        pos = movement.move(getRect());
     }
     void render() override {
         sprite.render(getRect());
@@ -86,15 +71,15 @@ struct BaseDino: Node {
     const Vector2 velocity = {0.f, 3.f};
     std::shared_ptr<T> movement = nullptr;
     explicit BaseDino(Rectangle ground): Node(), groundRect(ground) {
-        width = run.frame.width;
-        height = run.frame.height;
+        dim.width = run.frame.width;
+        dim.height = run.frame.height;
         groundRect.y += 8.f;
         movement = std::make_shared<T>(Vector2{0.f, 8.f});
     }
     ~BaseDino(){}
     void update() override {
         run.update();
-        pos = movement->move(getRect(), groundRect);
+        pos = movement->move(getRect(), Gravity::Orientation::None, groundRect);
         Node::update();
     }
     void render() override {
@@ -123,19 +108,19 @@ struct GameScreen: Node {
     using CactusPtr = std::shared_ptr<Cactus>;
     using Vector = std::vector<CactusPtr>;
     PlayerPtr player = nullptr;
-    NodePtr gameover = nullptr;
+    Node::NodeShared gameover = nullptr;
     Vector cactus = {
         std::make_shared<Cactus>("./games/dino-ai/img/cactus-big.png", Frame({25.f, 50.f}, {0, 0, 5}, {1, 6}, 0.f)),
         std::make_shared<Cactus>("./games/dino-ai/img/cactus-small.png", Frame({17.f, 35.f}, {0, 0, 5}, {1, 6}, 0.f)),
     };
     int score = 0.f;
     bool finished = false;
-    NodePtr ground = nullptr;
+    Node::NodeShared ground = nullptr;
     GameScreen(Color color): Node(),
         gameover(std::make_shared<GameOver>(color)),
         ground(std::make_shared<Ground>()) {
-        width = Game::winWidth();
-        height = Game::winHeight() / 2.f;
+        dim.width = Game::winWidth();
+        dim.height = Game::winHeight() / 2.f;
         makePlayer();
         add(ground);
         makeCacti();
@@ -144,18 +129,18 @@ struct GameScreen: Node {
     ~GameScreen(){}
     void makePlayer() {
         player = std::make_shared<Player>(ground->getRect());
-        player->pos.x = player->width;
-        player->pos.y = height - player->height * 1.3f;
+        player->pos.x = player->dim.width;
+        player->pos.y = dim.height - player->dim.height * 1.3f;
         add(player);
     }
     void makeCacti() {
         for (auto& c: cactus) {
-            children.emplace_back(c);
+            add(c);
         }
     }
     void makeGameOver() {
-        gameover->width = width;
-        gameover->height = height;
+        gameover->dim.width = dim.width;
+        gameover->dim.height = dim.height;
         gameover->visible = false;
         add(gameover);
     }

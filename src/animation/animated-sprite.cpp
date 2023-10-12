@@ -2,11 +2,14 @@
 
 
 AnimatedSprite::AnimatedSprite(const std::string& filename, Frame frame): frame(frame) {
-    texture = std::make_shared<Texture2D>(LoadTexture(filename.c_str()));
+    texture = std::make_unique<Texture2D>(LoadTexture(filename.c_str()));
 }
 
 AnimatedSprite::~AnimatedSprite() {
-    if (texture && texture.use_count() == 1) UnloadTexture(*texture);
+    if (texture) {
+        UnloadTexture(*texture);
+        texture.release();
+    }
 }
 
 void AnimatedSprite::update() {
@@ -17,5 +20,6 @@ void AnimatedSprite::update() {
 }
 
 void AnimatedSprite::render(const Rectangle& dst) {
-    DrawTexturePro(*texture, frame.getRect(), dst, Vector2{0.f, 0.f}, 0.f, WHITE);
+    const Rectangle& rect = frame.getRect();
+    DrawTexturePro(*texture, rect, dst, Vector2{0.f, 0.f}, 0.f, WHITE);
 }

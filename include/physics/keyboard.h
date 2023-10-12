@@ -4,12 +4,20 @@
 #include "physics.h"
 
 struct Keyboard: Physics {
-    explicit Keyboard(Vector2 v): Physics(v){}
-    Vector2 move(const Rectangle& rect, const Rectangle& grect, Orientation orient= Orientation::None) override {
-        return Physics::translate({rect.x, rect.y}, vel.x, orient);
+    explicit Keyboard(Vector2 velocity): Physics(velocity){}
+    Vector2 move(const Rectangle& rect = {}, Orientation orient= Orientation::None, const Rectangle& ground = {}) override {
+        return Physics::translate({rect.x, rect.y}, vel, orient);
+    }
+    static Orientation keyCodeToOrientation(int keycode) {
+        static Orientation map[] = {
+            Orientation::Right,
+            Orientation::Left,
+            Orientation::Down,
+            Orientation::Up
+        };
+        if (keycode < 262 || keycode > 265) return Orientation::None;
+        return map[keycode - KEY_RIGHT];
     }
 };
-
-using KeyboardPtr = std::shared_ptr<Keyboard>;
 
 #endif // KEYBOARD_H
