@@ -2,10 +2,10 @@
 #define LEFTINFRANDOM_H
 #include "physics.h"
 #include <raylib.h>
-#include "include/utils/randomize.h"
-#include "include/game.h"
-#include "include/event-manager.h"
-#include "include/score-up-event.h"
+#include "utils/randomize.h"
+#include "game.h"
+#include "event-manager.h"
+#include "score-up-event.h"
 
 struct LeftInfiniteRandom: Physics {
     enum class Type {Horizontal, Vertical, Both};

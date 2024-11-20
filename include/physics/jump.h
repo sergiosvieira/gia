@@ -1,8 +1,8 @@
 #ifndef JUMP_H
 #define JUMP_H
 
-#include "include/physics/physics.h"
-#include "include/physics/gravity.h"
+#include "physics/physics.h"
+#include "physics/gravity.h"
 
 struct Jump: Physics {
     enum class Action {

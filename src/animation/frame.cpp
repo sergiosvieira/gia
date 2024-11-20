@@ -1,4 +1,4 @@
-#include "include/animation/frame.h"
+#include "animation/frame.h"
 
 #include "raylib.h"
 

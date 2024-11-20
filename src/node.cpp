@@ -1,8 +1,8 @@
 #include "../include/node.h"
 
 #include <cstdlib>
-#include "include/event.h"
-#include "include/gia-math.h"
+#include "event.h"
+#include "gia-math.h"
 
 Node::Node(const Vector2& pos,
            const Dimensions& dim,

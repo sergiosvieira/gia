@@ -1,9 +1,9 @@
 #ifndef GAMEOVER_H
 #define GAMEOVER_H
 
-#include "raygui/src/raygui.h"
-#include "include/node.h"
-#include "include/game.h"
+#include "raygui.h"
+#include "node.h"
+#include "game.h"
 
 struct GameOver : Node {
     Color color;

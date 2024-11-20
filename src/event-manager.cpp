@@ -2,9 +2,9 @@
 
 #include <memory>
 #include "raylib.h"
-#include "include/keyboard-event.h"
-#include "include/mouse-event.h"
-#include "include/node.h"
+#include "keyboard-event.h"
+#include "mouse-event.h"
+#include "node.h"
 
 void EventManager::subscribe(EventType type, Node::NodeShared node) {
     map[type].insert(node);
@@ -16,6 +16,14 @@ void EventManager::subscribe(EventType type, HandlerPtr handler) {
 
 void EventManager::emmit(EventPtr event) {
     events.push(event);
+}
+
+int GetKeyDown() {
+    int latestPKey=0;
+    int PKey=0;//ig the keyupdate is too fast...
+    // void inputKeyTest(){PKey=GetKeyPressed();
+    if(PKey)latestPKey=PKey;
+    if(IsKeyDown(latestPKey))printf("keyDown:(%i)\n",latestPKey);    
 }
 
 void EventManager::systemEvents() {

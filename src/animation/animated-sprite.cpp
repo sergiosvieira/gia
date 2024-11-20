@@ -1,4 +1,4 @@
-#include "include/animation/animated-sprite.h"
+#include "animation/animated-sprite.h"
 
 
 AnimatedSprite::AnimatedSprite(const std::string& filename, Frame frame): frame(frame) {

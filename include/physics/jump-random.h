@@ -2,7 +2,7 @@
 #define JUMPRANDOM_H
 
 #include "jump.h"
-#include "include/utils/randomize.h"
+#include "utils/randomize.h"
 
 struct JumpRandom: Jump {
     JumpRandom(Vector2 velocity): Jump(velocity) {

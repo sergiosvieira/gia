@@ -4,7 +4,7 @@
 #include <memory>
 #include "raylib.h"
 
-#include "include/animation/frame.h"
+#include "animation/frame.h"
 
 struct AnimatedSprite {
     using Texture2DPtr = std::unique_ptr<Texture2D>;

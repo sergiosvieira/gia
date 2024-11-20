@@ -1,5 +1,5 @@
-#include "include/physics/left-infinite.h"
-#include "include/game.h"
+#include "physics/left-infinite.h"
+#include "game.h"
 
 #include <cmath>
 

@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <cassert>
-#include "include/node.h"
+#include "node.h"
 
 struct ConcreteNode : Node {
     ConcreteNode(NodePtr parent = nullptr) {} // Construtor padrão

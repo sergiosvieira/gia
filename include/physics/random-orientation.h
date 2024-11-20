@@ -1,8 +1,8 @@
 #ifndef RANDOMORIENTATION_H
 #define RANDOMORIENTATION_H
 
-#include "include/physics/physics.h"
-#include "include/utils/randomize.h"
+#include "physics/physics.h"
+#include "utils/randomize.h"
 
 struct RandomOrientation: Physics {
     RandomOrientation(Vector2 velocity): Physics(velocity) {}

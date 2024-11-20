@@ -2,9 +2,9 @@
 #define GUI_H
 
 #include "raygui/src/raygui.h"
-#include "include/event-manager.h"
-#include "include/change-state-event.h"
-#include "include/game.h"
+#include "event-manager.h"
+#include "change-state-event.h"
+#include "game.h"
 
 float center(float p1, float p2) {
     return (p1 - p2) / 2.f;

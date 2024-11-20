@@ -1,18 +1,19 @@
 #ifndef SPACEAI_H
 #define SPACEAI_H
 
-#include "raygui/src/raygui.h"
-#include "include/game.h"
-#include "include/animation/animated-sprite.h"
-#include "include/physics/keyboard.h"
-#include "include/keyboard-event.h"
-#include "include/event-manager.h"
-#include "include/game.h"
-#include "include/physics/movement-limiter.h"
-#include "include/physics/random-orientation.h"
-#include "include/utils/layout.h"
-#include "include/physics/left-inf-random.h"
-#include "games/scenes/gameover.h"
+// #include "raygui/src/raygui.h"
+#include "raylib.h"
+#include "game.h"
+#include "animation/animated-sprite.h"
+#include "physics/keyboard.h"
+#include "keyboard-event.h"
+#include "event-manager.h"
+#include "game.h"
+#include "physics/movement-limiter.h"
+#include "physics/random-orientation.h"
+#include "utils/layout.h"
+#include "physics/left-inf-random.h"
+#include "scenes/gameover.h"
 
 template<typename T>
 struct Spaceship: Node {
